@@ -6,7 +6,7 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost"
+      "value": "http://localhost:8000"
     },
     {
       "key": "product_id",

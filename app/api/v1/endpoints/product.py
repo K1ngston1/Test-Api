@@ -35,10 +35,17 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     return service.get_product_detail(db, product_id)
 
 
-@router.post("", response_model=ProductDetail, status_code=status.HTTP_201_CREATED)
-def create_product(data: ProductCreate, db: Session = Depends(get_db)):
-    return service.create_product(db, data)
-
+@router.post(
+    "/{product_id}",
+    response_model=ProductDetail,
+    status_code=status.HTTP_201_CREATED
+)
+def create_product(
+    product_id: int,
+    data: ProductCreate,
+    db: Session = Depends(get_db)
+):
+    return service.create_product(db, product_id, data)
 
 @router.patch("/{product_id}", response_model=ProductDetail)
 def update_product(product_id: int, data: ProductUpdate, db: Session = Depends(get_db)):

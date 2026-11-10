@@ -51,19 +51,22 @@ class ProductDetail(BaseModel):
     manufacturer: ManufacturerOut | None
 
 
-# ---- create / update ----
+
 class ProductCreate(BaseModel):
-    name: str = Field(min_length=1, max_length=255)  # обов'язкове
-    status: int = 0                                  # за замовчуванням 0
+    name: str = Field(min_length=1, max_length=255)
+    status: int = 0
+
     model: str | None = None
     description: str | None = None
     image: str | None = None
     price: Decimal = Decimal("0")
     manufacturer_id: int | None = None
-    categories: list[int] = []
-    attributes: list[AttributeCreate] = []
-    images: list[ImageCreate] = []
-    stores: list[int] = []
+
+    categories: list[int] = Field(default_factory=list)
+    attributes: list[AttributeCreate] = Field(default_factory=list)
+    images: list[ImageCreate] = Field(default_factory=list)
+    stores: list[int] = Field(default_factory=list)
+
 
 
 class ProductUpdate(BaseModel):

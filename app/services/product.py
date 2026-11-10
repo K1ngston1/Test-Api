@@ -15,6 +15,12 @@ from schemas.product import (
 from services import category as category_service
 from services import store as store_service
 
+from models.product import (
+    Product,
+    ProductImage,
+    ProductAttribute,
+    ProductCategory,
+)
 
 def get_product_or_404(db: Session, product_id: int) -> Product:
     product = db.get(Product, product_id)
@@ -115,46 +121,9 @@ def get_product_detail(db: Session, product_id: int) -> ProductDetail:
 
 
 # ---------- CREATE ----------
-def create_product(db: Session, data: ProductCreate) -> ProductDetail:
-    if data.manufacturer_id is not None and not db.get(Manufacturer, data.manufacturer_id):
-        raise HTTPException(404, "Manufacturer not found")
-    category_service.ensure_categories_exist(db, data.categories)
-    store_service.ensure_stores_exist(db, data.stores)
-
-    product = Product(
-        **data.model_dump(include={
-            "name", "status", "model", "description", "image", "price", "manufacturer_id",
-        })
-    )
-    product.product_categories = [
-        ProductCategory(category_id=cid) for cid in dict.fromkeys(data.categories)
-    ]
-    product.product_stores = [ProductStore(store_id=sid) for sid in dict.fromkeys(data.stores)]
-    product.attributes = [ProductAttribute(**a.model_dump()) for a in data.attributes]
-    product.images = [ProductImage(**i.model_dump()) for i in data.images]
-
-    db.add(product)
-    db.commit()
-    return get_product_detail(db, product.product_id)
 
 
-# ---------- UPDATE ----------
-def update_product(db: Session, product_id: int, data: ProductUpdate) -> ProductDetail:
-    product = get_product_or_404(db, product_id)
-    changes = data.model_dump(exclude_unset=True)
 
-    if changes.get("name", "x") is None:
-        raise HTTPException(422, "name cannot be null")
-    if changes.get("manufacturer_id") is not None and not db.get(
-        Manufacturer, changes["manufacturer_id"]
-    ):
-        raise HTTPException(404, "Manufacturer not found")
-
-    for key, value in changes.items():
-        setattr(product, key, value)
-    product.date_modify = datetime.now()  # проставляється автоматично
-    db.commit()
-    return get_product_detail(db, product_id)
 
 
 # ---------- DELETE ----------
@@ -162,3 +131,118 @@ def delete_product(db: Session, product_id: int) -> None:
     product = get_product_or_404(db, product_id)
     db.delete(product)  # cascade видаляє image/attribute/category/store зв'язки
     db.commit()
+
+
+from sqlalchemy.exc import IntegrityError
+
+
+def create_product(
+    db: Session,
+    product_id: int,
+    data: ProductCreate
+) -> ProductDetail:
+
+    # Перевіряємо, чи існує товар із таким ID
+    if db.get(Product, product_id):
+        raise HTTPException(
+            status_code=409,
+            detail="Product with this ID already exists"
+        )
+
+    # Перевіряємо наявність категорій
+    for category_id in data.categories:
+        if not db.get(Category, category_id):
+            raise HTTPException(
+                status_code=404,
+                detail=f"Category {category_id} not found"
+            )
+
+    # Перевіряємо виробника, якщо переданий
+    if data.manufacturer_id is not None:
+        if not db.get(Manufacturer, data.manufacturer_id):
+            raise HTTPException(
+                status_code=404,
+                detail="Manufacturer not found"
+            )
+
+    try:
+        # Створюємо основний товар
+        product = Product(
+            product_id=product_id,
+            name=data.name,
+            status=data.status,
+            model=data.model,
+            description=data.description,
+            image=data.image,
+            price=data.price,
+            manufacturer_id=data.manufacturer_id,
+        )
+
+        db.add(product)
+        db.flush()
+
+        # Додаємо категорії
+        for category_id in data.categories:
+            product.product_categories.append(
+                ProductCategory(category_id=category_id)
+            )
+
+        # Додаємо атрибути
+        for attribute in data.attributes:
+            product.attributes.append(
+                ProductAttribute(
+                    name=attribute.name,
+                    value=attribute.value
+                )
+            )
+
+        # Додаємо фотографії
+        for image in data.images:
+            product.images.append(
+                ProductImage(
+                    image=image.image,
+                    sort_order=image.sort_order
+                )
+            )
+
+        db.commit()
+
+        # Повертаємо повністю сформований ProductDetail
+        return get_product_detail(db, product_id)
+
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail="Database integrity error. Check product data and foreign keys."
+        )
+
+    except Exception:
+        db.rollback()
+        raise
+
+def update_product(db: Session, product_id: int, data: ProductUpdate) -> ProductDetail:
+    product = get_product_or_404(db, product_id)
+
+    changes = data.model_dump(exclude_unset=True)
+
+    if "name" in changes and changes["name"] is None:
+        raise HTTPException(422, "name cannot be null")
+
+    if changes.get("manufacturer_id") is not None:
+        if not db.get(Manufacturer, changes["manufacturer_id"]):
+            raise HTTPException(404, "Manufacturer not found")
+
+    try:
+        for key, value in changes.items():
+            setattr(product, key, value)
+
+        product.date_modify = datetime.now()
+
+        db.commit()
+
+        return get_product_detail(db, product_id)
+
+    except Exception:
+        db.rollback()
+        raise
