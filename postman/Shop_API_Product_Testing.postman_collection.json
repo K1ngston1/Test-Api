@@ -1,0 +1,741 @@
+{
+  "info": {
+    "name": "Shop API — Product Testing",
+    "description": "Колекція запитів для тестування Product API.\n\nТестові SQL-дані для таблиці category:\nINSERT INTO category (name, description, parent_category_id, status, date_added, date_modify) VALUES ('Електроніка', 'Електронні пристрої', NULL, 1, NOW(), NOW());\n\nINSERT INTO category (name, description, parent_category_id, status, date_added, date_modify) VALUES\n('Смартфони', 'Мобільні телефони', 1, 1, NOW(), NOW()),\n('Комп’ютери', 'Комп’ютерна техніка', 1, 1, NOW(), NOW()),\n('Аксесуари', 'Аксесуари для техніки', 1, 1, NOW(), NOW());\n\nПеред запуском запитів 14–26 переконайтеся, що товар з ID 16 існує, а потрібні записи зображень, категорій, атрибутів і магазинів створені.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "product_id",
+      "value": "16"
+    },
+    {
+      "key": "product_image_id",
+      "value": "1"
+    },
+    {
+      "key": "product_category_id",
+      "value": "1"
+    },
+    {
+      "key": "product_attribute_id",
+      "value": "1"
+    },
+    {
+      "key": "product_store_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "1. GET /product — список товарів",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. GET /product — сортування назви А→Я",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "disabled": false
+                },
+                {
+                  "key": "order",
+                  "value": "asc",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. GET /product — сортування назви Я→А",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "disabled": false
+                },
+                {
+                  "key": "order",
+                  "value": "desc",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. GET /product — сортування за ціною",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "sort_by",
+                  "value": "price",
+                  "disabled": false
+                },
+                {
+                  "key": "order",
+                  "value": "asc",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. GET /product — сортування за категорією",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "sort_by",
+                  "value": "category",
+                  "disabled": false
+                },
+                {
+                  "key": "order",
+                  "value": "asc",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. GET /product — фільтр за категорією",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "1",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "7. GET /product — фільтр за ціною",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "price_from",
+                  "value": "100",
+                  "disabled": false
+                },
+                {
+                  "key": "price_to",
+                  "value": "50000",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. GET /product — пагінація",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "9. GET /product — усі параметри разом",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "price_from",
+                  "value": "100",
+                  "disabled": false
+                },
+                {
+                  "key": "price_to",
+                  "value": "50000",
+                  "disabled": false
+                },
+                {
+                  "key": "sort_by",
+                  "value": "price",
+                  "disabled": false
+                },
+                {
+                  "key": "order",
+                  "value": "asc",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "10. POST /product — створення товару",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"iPhone 15 Pro Max\",\n  \"categories\": [\n    2\n  ],\n  \"attributes\": [\n    {\n      \"name\": \"Колір\",\n      \"value\": \"Natural Titanium\"\n    },\n    {\n      \"name\": \"Пам'ять\",\n      \"value\": \"256 GB\"\n    },\n    {\n      \"name\": \"Дисплей\",\n      \"value\": \"6.7 дюйма\"\n    }\n  ],\n  \"images\": [\n    {\n      \"image\": \"catalog/iphone/15-pro-max-1.jpg\",\n      \"sort_order\": 0\n    },\n    {\n      \"image\": \"catalog/iphone/15-pro-max-2.jpg\",\n      \"sort_order\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "11. POST /product/{product_id} — створення/додавання даних товару",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"iPhone 15 Pro Max\",\n  \"categories\": [\n    2\n  ],\n  \"attributes\": [\n    {\n      \"name\": \"Колір\",\n      \"value\": \"Natural Titanium\"\n    },\n    {\n      \"name\": \"Пам'ять\",\n      \"value\": \"256 GB\"\n    },\n    {\n      \"name\": \"Дисплей\",\n      \"value\": \"6.7 дюйма\"\n    }\n  ],\n  \"images\": [\n    {\n      \"image\": \"catalog/iphone/15-pro-max-1.jpg\",\n      \"sort_order\": 0\n    },\n    {\n      \"image\": \"catalog/iphone/15-pro-max-2.jpg\",\n      \"sort_order\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "У цьому запиті використано ID 16, як у початковому списку."
+          }
+        },
+        {
+          "name": "12. PATCH /product/{product_id} — редагування товару",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"iPhone 15 Pro Max Updated\",\n  \"price\": 45999,\n  \"status\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "13. DELETE /product/{product_id} — видалення товару",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Image",
+      "item": [
+        {
+          "name": "14. POST /image — додати зображення",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16/image",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "image"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image\": \"catalog/products/iphone15-back.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "15. GET /image/{product_image_id} — отримати зображення",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/image/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "image",
+                "1"
+              ]
+            },
+            "description": "Очікуваний приклад відповіді: {\"image\":\"catalog/products/iphone15-back.jpg\"}. GET-запит не має Body."
+          }
+        },
+        {
+          "name": "16. GET /image — отримати всі зображення",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/image",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "image"
+              ]
+            }
+          }
+        },
+        {
+          "name": "17. PATCH /image/{product_image_id} — змінити зображення",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16/image/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "image",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sort_order\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "18. DELETE /image/{product_image_id} — видалити зображення",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/image/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "image",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "19. POST /category — додати категорію товару",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16/category",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "category"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "20. GET /category — отримати категорії товару",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/category",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "category"
+              ]
+            }
+          }
+        },
+        {
+          "name": "21. GET /category/{product_category_id} — отримати категорію товару",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/category/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "category",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attribute",
+      "item": [
+        {
+          "name": "22. POST /attribute — додати атрибут",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16/attribute",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "attribute"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Колір\",\n  \"value\": \"Чорний\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "23. GET /attribute — отримати атрибути",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/attribute",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "attribute"
+              ]
+            }
+          }
+        },
+        {
+          "name": "25. PATCH /attribute/{product_attribute_id} — редагувати атрибут",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/product/16/attribute/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "attribute",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Колір\",\n  \"value\": \"Natural Titanium\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Store",
+      "item": [
+        {
+          "name": "24. GET /store — отримати магазини товару",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/store",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "26. DELETE /store/{product_store_id} — видалити зв'язок з магазином",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/product/16/store/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product",
+                "16",
+                "store",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
