@@ -7,7 +7,6 @@ class ImageCreate(BaseModel):
 
 
 class ImageUpdate(BaseModel):
-    """Редагується лише sort_order."""
     model_config = ConfigDict(extra="forbid")
     sort_order: int
 

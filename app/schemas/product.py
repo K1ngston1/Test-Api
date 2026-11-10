@@ -16,7 +16,6 @@ class ManufacturerOut(BaseModel):
     image: str | None = None
 
 
-# ---- list ----
 class ProductListItem(BaseModel):
     product_id: int
     name: str
@@ -32,7 +31,6 @@ class ProductListResponse(BaseModel):
     pages: int
 
 
-# ---- detail ----
 class ProductDetail(BaseModel):
     product_id: int
     name: str
@@ -70,7 +68,6 @@ class ProductCreate(BaseModel):
 
 
 class ProductUpdate(BaseModel):
-    """product_id, date_added, date_modify не редагуються (extra=forbid -> 422)."""
     model_config = ConfigDict(extra="forbid")
     name: str | None = Field(default=None, min_length=1, max_length=255)
     status: int | None = None

@@ -7,7 +7,6 @@ class AttributeCreate(BaseModel):
 
 
 class AttributeUpdate(BaseModel):
-    """product_attribute_id та product_id не редагуються (extra=forbid -> 422)."""
     model_config = ConfigDict(extra="forbid")
     name: str | None = None
     value: str | None = None

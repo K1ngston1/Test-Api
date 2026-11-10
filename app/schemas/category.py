@@ -8,7 +8,7 @@ class CategoryLink(BaseModel):
 class CategoryOut(BaseModel):
     category_id: int
     name: str
-    path: str  # повний шлях: "Електроніка > Телефони > Смартфони"
+    path: str
 
 
 class ProductCategoryOut(CategoryOut):

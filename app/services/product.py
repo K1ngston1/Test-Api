@@ -6,8 +6,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from models import (
-    Category, Manufacturer, Product, ProductAttribute, ProductCategory,
-    ProductImage, ProductStore,
+    Category, Manufacturer,
+    ProductStore,Product,
+    ProductImage,
+    ProductAttribute,
+    ProductCategory,
 )
 from schemas.product import (
     ProductCreate, ProductDetail, ProductListItem, ProductListResponse, ProductUpdate,
@@ -15,12 +18,6 @@ from schemas.product import (
 from services import category as category_service
 from services import store as store_service
 
-from models.product import (
-    Product,
-    ProductImage,
-    ProductAttribute,
-    ProductCategory,
-)
 
 def get_product_or_404(db: Session, product_id: int) -> Product:
     product = db.get(Product, product_id)
@@ -28,8 +25,6 @@ def get_product_or_404(db: Session, product_id: int) -> Product:
         raise HTTPException(404, "Product not found")
     return product
 
-
-# ---------- LIST ----------
 def list_products(
     db: Session, *, category_id, price_from, price_to, sort_by, order, page, limit
 ) -> ProductListResponse:
@@ -82,9 +77,6 @@ def list_products(
     return ProductListResponse(
         items=items, total=total, page=page, limit=limit, pages=math.ceil(total / limit)
     )
-
-
-# ---------- DETAIL ----------
 def get_product_detail(db: Session, product_id: int) -> ProductDetail:
     product = db.scalar(
         select(Product)
@@ -119,14 +111,6 @@ def get_product_detail(db: Session, product_id: int) -> ProductDetail:
         manufacturer=product.manufacturer,
     )
 
-
-# ---------- CREATE ----------
-
-
-
-
-
-# ---------- DELETE ----------
 def delete_product(db: Session, product_id: int) -> None:
     product = get_product_or_404(db, product_id)
     db.delete(product)  # cascade видаляє image/attribute/category/store зв'язки
@@ -142,14 +126,12 @@ def create_product(
     data: ProductCreate
 ) -> ProductDetail:
 
-    # Перевіряємо, чи існує товар із таким ID
     if db.get(Product, product_id):
         raise HTTPException(
             status_code=409,
             detail="Product with this ID already exists"
         )
 
-    # Перевіряємо наявність категорій
     for category_id in data.categories:
         if not db.get(Category, category_id):
             raise HTTPException(
@@ -157,7 +139,7 @@ def create_product(
                 detail=f"Category {category_id} not found"
             )
 
-    # Перевіряємо виробника, якщо переданий
+
     if data.manufacturer_id is not None:
         if not db.get(Manufacturer, data.manufacturer_id):
             raise HTTPException(
@@ -166,7 +148,6 @@ def create_product(
             )
 
     try:
-        # Створюємо основний товар
         product = Product(
             product_id=product_id,
             name=data.name,
@@ -180,14 +161,10 @@ def create_product(
 
         db.add(product)
         db.flush()
-
-        # Додаємо категорії
         for category_id in data.categories:
             product.product_categories.append(
                 ProductCategory(category_id=category_id)
             )
-
-        # Додаємо атрибути
         for attribute in data.attributes:
             product.attributes.append(
                 ProductAttribute(
@@ -196,7 +173,6 @@ def create_product(
                 )
             )
 
-        # Додаємо фотографії
         for image in data.images:
             product.images.append(
                 ProductImage(
@@ -207,7 +183,6 @@ def create_product(
 
         db.commit()
 
-        # Повертаємо повністю сформований ProductDetail
         return get_product_detail(db, product_id)
 
     except IntegrityError:
