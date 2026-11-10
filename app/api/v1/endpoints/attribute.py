@@ -33,7 +33,32 @@ def update_attribute(product_attribute_id: int, data: AttributeUpdate,
     return service.update_attribute(db, product, product_attribute_id, data)
 
 
-@router.delete("/{product_attribute_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_attribute(product_attribute_id: int, product: Product = Depends(product_dep),
-                     db: Session = Depends(get_db)):
+
+
+@router.get("/{product_attribute_id}", response_model=AttributeOut)
+def get_attribute(
+    product_attribute_id: int,
+    product: Product = Depends(product_dep),
+    db: Session = Depends(get_db)
+):
+    return service.get_attribute(db, product, product_attribute_id)
+
+@router.patch("/{product_attribute_id}", response_model=AttributeOut)
+def update_attribute(
+    product_attribute_id: int,
+    data: AttributeUpdate,
+    product: Product = Depends(product_dep),
+    db: Session = Depends(get_db)
+):
+    return service.update_attribute(db, product, product_attribute_id, data)
+
+@router.delete(
+    "/{product_attribute_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+def delete_attribute(
+    product_attribute_id: int,
+    product: Product = Depends(product_dep),
+    db: Session = Depends(get_db)
+):
     service.delete_attribute(db, product, product_attribute_id)

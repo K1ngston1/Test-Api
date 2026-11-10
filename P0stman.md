@@ -94,3 +94,46 @@ VALUES
   "price": 45999,
   "status": 1
 }
+13. Delete http://localhost:8000/product/16
+{
+  "name": "iPhone 15 Pro Max Updated",
+  "price": 45999,
+  "status": 1
+}
+14. Post http://localhost:8000/product/16/image
+{
+  "image": "catalog/products/iphone15-back.jpg"
+}
+15. Get http://localhost:8000/product/16/image/1
+{
+  "image": "catalog/products/iphone15-back.jpg"
+}
+16. Get http://localhost:8000/product/16/image
+{
+  "image": "catalog/products/iphone15-back.jpg"
+}
+17. Patch http://localhost:8000/product/16/image/1
+{
+  "sort_order": 2
+}
+18. Delete http://localhost:8000/product/16/image/1
+
+19. Post http://localhost:8000/product/16/category
+{
+  "category_id": 2
+}
+20. Get http://localhost:8000/product/16/category
+21. Get http://localhost:8000/product/16/category/1
+22. Post http://localhost:8000/product/16/attribute
+{
+  "name": "Колір",
+  "value": "Чорний"
+}
+23. Get http://localhost:8000/product/16/attribute
+24. Get http://localhost:8000/product/16/store
+25. Patch http://localhost:8000/product/16/attribute/1
+{
+  "name": "Колір",
+  "value": "Natural Titanium"
+}
+26. Delete http://localhost:8000/product/16/store/1
